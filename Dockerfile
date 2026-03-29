@@ -30,3 +30,4 @@ EXPOSE 4000
 
 # Command to run the Angular SSR server
 CMD ["node", "dist/school_management_system/server/server.mjs"]
+
