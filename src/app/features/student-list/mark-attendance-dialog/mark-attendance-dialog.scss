@@ -1,0 +1,31 @@
+/* Let the calendar popover escape dialog content clipping when needed */
+.attendance-dialog-content {
+  overflow: visible;
+}
+
+.attendance-form {
+  display: flex;
+  flex-direction: column;
+  padding-top: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.radio-group-container {
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+}
+
+.radio-label {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: #3f51b5;
+}
+
+.status-radio-group {
+  display: flex;
+  gap: 16px;
+}

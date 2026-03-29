@@ -1,0 +1,49 @@
+<h2 mat-dialog-title>{{ ui?.titlePrefix }} {{ studentName }}</h2>
+
+<mat-dialog-content class="attendance-dialog-content">
+  <form [formGroup]="attendanceForm" class="attendance-form">
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>{{ ui?.dateLabel }}</mat-label>
+      <input
+        matInput
+        [matDatepicker]="dp"
+        formControlName="date"
+        [min]="attendanceDateMin"
+        [max]="attendanceDateMax"
+        [readonly]="false"
+      />
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="dp"
+        (click)="$event.stopPropagation()"
+      ></mat-datepicker-toggle>
+      <mat-datepicker
+        #dp
+        [touchUi]="true"
+        panelClass="attendance-datepicker-panel"
+      ></mat-datepicker>
+      <mat-error *ngIf="attendanceForm.get('date')?.hasError('required')">{{ ui?.dateRequired }}</mat-error>
+      <mat-error
+        *ngIf="
+          attendanceForm.get('date')?.hasError('matDatepickerMin') ||
+          attendanceForm.get('date')?.hasError('matDatepickerMax')
+        "
+      >
+        {{ ui?.dateNotAllowed }}
+      </mat-error>
+    </mat-form-field>
+
+    <div class="radio-group-container">
+      <label class="radio-label">{{ ui?.statusLabel }}</label>
+      <mat-radio-group formControlName="status" class="status-radio-group">
+        <mat-radio-button value="Present">{{ ui?.present }}</mat-radio-button>
+        <mat-radio-button value="Absent" color="warn">{{ ui?.absent }}</mat-radio-button>
+      </mat-radio-group>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">{{ ui?.cancel }}</button>
+  <button mat-raised-button color="primary" (click)="onSave()">{{ ui?.save }}</button>
+</mat-dialog-actions>

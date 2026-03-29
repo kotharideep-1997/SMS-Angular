@@ -1,0 +1,6 @@
+{
+  "login": {
+    "usernamePattern": "^[a-zA-Z]+$",
+    "passwordPattern": "^[a-zA-Z][a-zA-Z0-9]*$"
+  }
+}

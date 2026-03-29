@@ -1,0 +1,73 @@
+
+// Include theming for Angular Material with `mat.theme()`.
+// This Sass mixin will define CSS variables that are used for styling Angular Material
+// components according to the Material 3 design spec.
+// Learn more about theming and how to use it for your application's
+// custom components at https://material.angular.dev/guide/theming
+@use '@angular/material' as mat;
+
+html {
+  height: 100%;
+  @include mat.theme((
+    color: (
+      primary: mat.$azure-palette,
+      tertiary: mat.$blue-palette,
+    ),
+    typography: Roboto,
+    density: 0,
+  ));
+}
+
+body {
+  // Default the application to a light color theme. This can be changed to
+  // `dark` to enable the dark color theme, or to `light dark` to defer to the
+  // user's system settings.
+  color-scheme: light;
+
+  // Set a default background, font and text colors for the application using
+  // Angular Material's system-level CSS variables. Learn more about these
+  // variables at https://material.angular.dev/guide/system-variables
+  background-color: var(--mat-sys-surface);
+  color: var(--mat-sys-on-surface);
+  font: var(--mat-sys-body-medium);
+
+  // Reset the user agent margin.
+  margin: 0;
+  height: 100%;
+}
+
+/* Toasts (MatSnackBar) — see ToastMessageService.
+   Material reads --mat-snack-bar-* (hyphenated), not --mat-snackbar-*. */
+.sms-error-snackbar {
+  --mat-snack-bar-container-color: #c62828;
+  --mat-snack-bar-supporting-text-color: #ffffff;
+}
+
+.sms-success-snackbar {
+  --mat-snack-bar-container-color: #2e7d32;
+  --mat-snack-bar-supporting-text-color: #ffffff;
+}
+
+.sms-error-snackbar .mdc-snackbar__label,
+.sms-success-snackbar .mdc-snackbar__label {
+  white-space: pre-line;
+  color: var(--mat-snack-bar-supporting-text-color);
+}
+
+/*
+ * Dialog pane and backdrop both default to z-index 1000; in some stacks the backdrop
+ * can paint above the panel. Keep the panel slightly higher; datepicker stays on top.
+ */
+.cdk-overlay-container .cdk-overlay-pane.mat-mdc-dialog-panel {
+  z-index: 1002 !important;
+}
+
+/*
+ * Datepicker overlays must sit above MatDialog.
+ * Custom panelClass on <mat-datepicker> applies to mat-calendar, not the CDK pane —
+ * the pane uses .mat-datepicker-popup or .mat-datepicker-dialog.
+ */
+.cdk-overlay-container .cdk-overlay-pane.mat-datepicker-popup,
+.cdk-overlay-container .cdk-overlay-pane.mat-datepicker-dialog {
+  z-index: 10000 !important;
+}

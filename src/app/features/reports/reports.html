@@ -1,0 +1,181 @@
+<div class="reports-container">
+  <header class="reports-header">
+    <h1 class="reports-title">{{ ui?.title }}</h1>
+    <p class="reports-intro">{{ ui?.intro }}</p>
+  </header>
+
+  <div
+    class="widgets-section"
+    [class.widgets-section--loading]="summaryLoading"
+    [attr.aria-busy]="summaryLoading"
+    [attr.aria-label]="summaryLoading ? (ui?.summaryLoadingAria ?? '') : null"
+  >
+    <mat-card
+      class="widget present-widget"
+      role="button"
+      tabindex="0"
+      [class.widget--disabled]="summaryLoading"
+      (click)="showAttendance('Present')"
+      (keydown.enter)="showAttendance('Present')"
+      (keydown.space)="onSummaryCardKeydown($event, 'Present')"
+    >
+      <mat-card-header>
+        <mat-card-title>{{ ui?.presentToday }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="widget-value">
+        @if (summaryLoading) {
+          <mat-spinner diameter="40" class="widget-spinner" />
+        } @else {
+          <h2>{{ presentToday }}</h2>
+        }
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card
+      class="widget absent-widget"
+      role="button"
+      tabindex="0"
+      [class.widget--disabled]="summaryLoading"
+      (click)="showAttendance('Absent')"
+      (keydown.enter)="showAttendance('Absent')"
+      (keydown.space)="onSummaryCardKeydown($event, 'Absent')"
+    >
+      <mat-card-header>
+        <mat-card-title>{{ ui?.absentToday }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content class="widget-value">
+        @if (summaryLoading) {
+          <mat-spinner diameter="40" class="widget-spinner" />
+        } @else {
+          <h2>{{ absentToday }}</h2>
+        }
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="filter-card">
+    <mat-card-header>
+      <mat-card-title>{{ ui?.filterCardTitle }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="filterForm" (ngSubmit)="onFilterSubmit()" class="filter-form">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ ui?.dateRangeLabel }}</mat-label>
+          <mat-date-range-input
+            [rangePicker]="picker"
+            [min]="reportDateRangeMin"
+            [max]="reportDateRangeMax"
+          >
+            <input matStartDate formControlName="startDate" [placeholder]="ui?.startDatePlaceholder ?? ''" />
+            <input matEndDate formControlName="endDate" [placeholder]="ui?.endDatePlaceholder ?? ''" />
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ ui?.studentNameLabel }}</mat-label>
+          <input matInput formControlName="name" [placeholder]="ui?.searchByNamePlaceholder ?? ''" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ ui?.rollNumberLabel }}</mat-label>
+          <input matInput formControlName="rollNo" [placeholder]="ui?.searchByRollPlaceholder ?? ''" />
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          [disabled]="filterForm.invalid || gridLoading"
+          class="filter-btn"
+        >
+          {{ ui?.applyFilter }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="table-card mat-elevation-z8" [attr.aria-busy]="gridLoading">
+    @if (gridLoading) {
+      <div class="grid-table-loading" role="status" [attr.aria-label]="ui?.gridLoadingAria ?? ''">
+        <mat-spinner diameter="48" />
+      </div>
+    }
+    <div class="table-card-inner" [class.table-card-inner--dimmed]="gridLoading">
+    <div class="table-toolbar">
+      <span class="table-toolbar-label">{{ ui?.exportToolbarTitle }}</span>
+      <div class="table-toolbar-actions">
+        <button
+          mat-stroked-button
+          type="button"
+          color="primary"
+          (click)="downloadReportCsv()"
+          [disabled]="!canExportReport()"
+          [matTooltip]="ui?.exportDisabledTooltip ?? ''"
+          [matTooltipDisabled]="canExportReport()"
+          class="export-btn"
+        >
+          <mat-icon>file_download</mat-icon>
+          {{ ui?.downloadCsv }}
+        </button>
+      </div>
+    </div>
+
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="rollNo">
+        <th mat-header-cell *matHeaderCellDef>{{ ui?.colRollNo }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.rollNo }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef>{{ ui?.colFirstName }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.firstName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef>{{ ui?.colLastName }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.lastName }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="class">
+        <th mat-header-cell *matHeaderCellDef>{{ ui?.colClass }}</th>
+        <td mat-cell *matCellDef="let row">{{ row.class }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="attendanceDate">
+        <th mat-header-cell *matHeaderCellDef>{{ ui?.colAttendanceDate }}</th>
+        <td mat-cell *matCellDef="let row">{{ formatAttendanceDate(row.attendanceDate) }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="attendanceStatus">
+        <th mat-header-cell *matHeaderCellDef>{{ ui?.colAttendance }}</th>
+        <td mat-cell *matCellDef="let row">
+          <span
+            [class.present]="row.attendanceStatus === 'Present'"
+            [class.absent]="row.attendanceStatus === 'Absent'"
+            class="status-badge"
+          >
+            {{ row.attendanceStatus || ui?.statusNotMarked }}
+          </span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns.length">{{ ui?.noRecords }}</td>
+      </tr>
+    </table>
+
+    <mat-paginator
+      [pageSize]="reportPageSize"
+      (page)="onReportPaginatorPage($event)"
+      [pageSizeOptions]="[10, 25, 50, 100]"
+      showFirstLastButtons
+      [attr.aria-label]="ui?.paginatorAria"
+    ></mat-paginator>
+    </div>
+  </div>
+</div>

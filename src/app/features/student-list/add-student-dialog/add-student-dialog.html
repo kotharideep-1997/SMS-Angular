@@ -1,0 +1,142 @@
+<h2 mat-dialog-title>{{ isEditMode ? ui?.titleEdit : ui?.titleAdd }}</h2>
+
+<mat-dialog-content>
+  @if (classesLoadFailed) {
+    <p class="load-error">{{ ui?.classesLoadError }}</p>
+  } @else if (!classesLoading && activeClasses.length === 0) {
+    <p class="load-error">{{ ui?.noClassesAvailable }}</p>
+  }
+
+  <form [formGroup]="studentForm">
+    <div formArrayName="students">
+      @for (student of students.controls; track $index; let i = $index) {
+        <div [formGroupName]="i" class="student-form-row">
+          @if (!isEditMode) {
+            <div class="form-header">
+              <span>{{ ui?.studentLabelPrefix }} {{ i + 1 }}</span>
+              @if (students.length > 1) {
+                <button mat-icon-button color="warn" type="button" (click)="removeStudentField(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              }
+            </div>
+          }
+
+          <div class="fields-grid">
+            <div class="fields-row">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ ui?.firstNameLabel }}</mat-label>
+                <input
+                  matInput
+                  formControlName="firstName"
+                  maxlength="20"
+                  autocomplete="off"
+                  [placeholder]="ui?.firstNamePlaceholder ?? ''"
+                  (keydown)="onNameKeydown($event)"
+                  (input)="onNameInput($event, i, 'firstName')"
+                />
+                @if (student.get('firstName')?.hasError('required') && student.get('firstName')?.touched) {
+                  <mat-error>{{ ui?.required }}</mat-error>
+                }
+                @if (student.get('firstName')?.hasError('minlength') && student.get('firstName')?.touched) {
+                  <mat-error>{{ ui?.minLengthName }}</mat-error>
+                }
+                @if (student.get('firstName')?.hasError('maxlength') && student.get('firstName')?.touched) {
+                  <mat-error>{{ ui?.maxLengthName }}</mat-error>
+                }
+                @if (student.get('firstName')?.hasError('nameLettersOnly') && student.get('firstName')?.touched) {
+                  <mat-error>{{ ui?.nameLettersOnly }}</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>{{ ui?.lastNameLabel }}</mat-label>
+                <input
+                  matInput
+                  formControlName="lastName"
+                  maxlength="20"
+                  autocomplete="off"
+                  [placeholder]="ui?.lastNamePlaceholder ?? ''"
+                  (keydown)="onNameKeydown($event)"
+                  (input)="onNameInput($event, i, 'lastName')"
+                />
+                @if (student.get('lastName')?.hasError('required') && student.get('lastName')?.touched) {
+                  <mat-error>{{ ui?.required }}</mat-error>
+                }
+                @if (student.get('lastName')?.hasError('minlength') && student.get('lastName')?.touched) {
+                  <mat-error>{{ ui?.minLengthName }}</mat-error>
+                }
+                @if (student.get('lastName')?.hasError('maxlength') && student.get('lastName')?.touched) {
+                  <mat-error>{{ ui?.maxLengthName }}</mat-error>
+                }
+                @if (student.get('lastName')?.hasError('nameLettersOnly') && student.get('lastName')?.touched) {
+                  <mat-error>{{ ui?.nameLettersOnly }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+
+            <div class="fields-row">
+              <mat-form-field appearance="outline">
+                <mat-label>{{ ui?.rollNoLabel }}</mat-label>
+                <input
+                  matInput
+                  formControlName="rollNo"
+                  maxlength="3"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  [placeholder]="ui?.rollNoPlaceholder ?? ''"
+                  (keydown)="onRollKeydown($event)"
+                  (input)="onRollInput($event, i)"
+                />
+                @if (student.get('rollNo')?.hasError('required') && student.get('rollNo')?.touched) {
+                  <mat-error>{{ ui?.required }}</mat-error>
+                }
+                @if (student.get('rollNo')?.hasError('rollNoDigitsOnly') && student.get('rollNo')?.touched) {
+                  <mat-error>{{ ui?.rollNoDigitsOnly }}</mat-error>
+                }
+                @if (student.get('rollNo')?.hasError('rollNoInvalid') && student.get('rollNo')?.touched) {
+                  <mat-error>{{ ui?.rollNoInvalid }}</mat-error>
+                }
+              </mat-form-field>
+
+              <mat-form-field appearance="outline">
+                <mat-label>{{ ui?.classLabel }}</mat-label>
+                <mat-select formControlName="classId" [placeholder]="ui?.classPlaceholder ?? ''">
+                  @for (c of activeClasses; track c.id) {
+                    <mat-option [value]="c.id">{{ c.class }}</mat-option>
+                  }
+                </mat-select>
+                @if (student.get('classId')?.hasError('required') && student.get('classId')?.touched) {
+                  <mat-error>{{ ui?.required }}</mat-error>
+                }
+              </mat-form-field>
+            </div>
+          </div>
+
+          @if (!isEditMode && i < students.length - 1) {
+            <mat-divider class="my-divider"></mat-divider>
+          }
+        </div>
+      }
+    </div>
+
+    @if (!isEditMode) {
+      <button mat-stroked-button color="primary" type="button" (click)="addStudentField()" class="add-more-btn">
+        <mat-icon>add</mat-icon> {{ ui?.addMore }}
+      </button>
+    }
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button type="button" (click)="onCancel()">{{ ui?.cancel }}</button>
+  <button
+    mat-raised-button
+    color="primary"
+    type="button"
+    [disabled]="!canSave"
+    (click)="onSave()"
+  >
+    {{ ui?.save }}
+  </button>
+</mat-dialog-actions>

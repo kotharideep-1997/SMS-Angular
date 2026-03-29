@@ -1,0 +1,15 @@
+<mat-toolbar color="primary" *ngIf="isAuthenticated()">
+  <span class="app-title">SMS</span>
+  <span class="spacer"></span>
+  <div class="nav-links">
+    <a mat-button routerLink="/dashboard" routerLinkActive="active-link">Dashboard</a>
+    <a mat-button routerLink="/students" routerLinkActive="active-link">Student List</a>
+    <button mat-icon-button (click)="logout()" matTooltip="Logout">
+      <mat-icon>logout</mat-icon>
+    </button>
+  </div>
+</mat-toolbar>
+
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>

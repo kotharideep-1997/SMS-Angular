@@ -1,0 +1,45 @@
+.load-error {
+  margin: 0 0 16px;
+  color: var(--mat-sys-error, #c62828);
+  font: var(--mat-sys-body-medium);
+}
+
+.student-form-row {
+  margin-bottom: 24px;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  margin-bottom: 12px;
+  color: #3f51b5;
+}
+
+.fields-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  width: 100%;
+}
+
+.fields-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 20px;
+  align-items: start;
+}
+
+.fields-row mat-form-field {
+  width: 100%;
+}
+
+.my-divider {
+  margin: 24px 0;
+}
+
+.add-more-btn {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}

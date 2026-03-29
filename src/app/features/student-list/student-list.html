@@ -1,0 +1,70 @@
+<div class="list-container">
+  @if (createOnlyHint()) {
+    <p class="create-only-hint">{{ ui?.createOnlyHint }}</p>
+  }
+
+  <div class="header-actions" *ngIf="showStudentTable() || showAddButton()">
+    <mat-form-field appearance="outline" class="search-field" *ngIf="showSearchBar()">
+      <mat-label>{{ ui?.searchLabel }}</mat-label>
+      <input matInput (keyup)="applyFilter($event)" [placeholder]="ui?.searchPlaceholder ?? ''">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <button mat-raised-button color="primary" *ngIf="showAddButton()" (click)="openAddStudentDialog()">
+      <mat-icon>add</mat-icon> {{ ui?.addStudent }}
+    </button>
+  </div>
+
+  <div class="mat-elevation-z8 table-container" *ngIf="showStudentTable()">
+    <table mat-table [dataSource]="dataSource" matSort>
+
+      <ng-container matColumnDef="rollNo">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ ui?.colRollNo }} </th>
+        <td mat-cell *matCellDef="let row"> {{row.rollNo}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ ui?.colFirstName }} </th>
+        <td mat-cell *matCellDef="let row"> {{row.firstName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ ui?.colLastName }} </th>
+        <td mat-cell *matCellDef="let row"> {{row.lastName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="class">
+        <th mat-header-cell *matHeaderCellDef mat-sort-header> {{ ui?.colClass }} </th>
+        <td mat-cell *matCellDef="let row"> {{row.class}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef> {{ ui?.colActions }} </th>
+        <td mat-cell *matCellDef="let row">
+          @if (showEditRow()) {
+            <button mat-icon-button color="primary" type="button" (click)="openEditDialog(row)" [matTooltip]="ui?.tooltipEdit ?? ''">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button mat-icon-button color="accent" type="button" (click)="openAttendanceDialog(row)" [matTooltip]="ui?.tooltipMarkAttendance ?? ''">
+              <mat-icon>event_available</mat-icon>
+            </button>
+          }
+          @if (showDeleteRow()) {
+            <button mat-icon-button color="warn" type="button" (click)="confirmDeleteStudent(row)" [matTooltip]="ui?.tooltipDelete ?? ''">
+              <mat-icon>delete</mat-icon>
+            </button>
+          }
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns()"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns();"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" [attr.colspan]="displayedColumns().length">{{ ui?.noDataMatchingPrefix }}{{ dataSource.filter }}{{ ui?.noDataMatchingSuffix }}</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [attr.aria-label]="ui?.paginatorAria"></mat-paginator>
+  </div>
+</div>

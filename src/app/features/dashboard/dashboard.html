@@ -1,0 +1,100 @@
+<div class="dashboard-container">
+  
+  <div class="widgets-section">
+    <mat-card class="widget present-widget" (click)="showAttendance('Present')">
+      <mat-card-header>
+        <mat-card-title>{{ ui?.presentToday }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{ presentToday }}</h2>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="widget absent-widget" (click)="showAttendance('Absent')">
+      <mat-card-header>
+        <mat-card-title>{{ ui?.absentToday }}</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <h2>{{ absentToday }}</h2>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <mat-card class="filter-card">
+    <mat-card-header>
+      <mat-card-title>{{ ui?.filterCardTitle }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="filterForm" (ngSubmit)="onFilterSubmit()" class="filter-form">
+        <mat-form-field appearance="outline">
+          <mat-label>{{ ui?.dateRangeLabel }}</mat-label>
+          <mat-date-range-input [rangePicker]="picker">
+            <input matStartDate formControlName="startDate" [placeholder]="ui?.startDatePlaceholder ?? ''">
+            <input matEndDate formControlName="endDate" [placeholder]="ui?.endDatePlaceholder ?? ''">
+          </mat-date-range-input>
+          <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-date-range-picker #picker></mat-date-range-picker>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ ui?.studentNameLabel }}</mat-label>
+          <input matInput formControlName="name" [placeholder]="ui?.searchByNamePlaceholder ?? ''">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>{{ ui?.rollNumberLabel }}</mat-label>
+          <input matInput formControlName="rollNo" [placeholder]="ui?.searchByRollPlaceholder ?? ''">
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="filterForm.invalid" class="filter-btn">
+          {{ ui?.applyFilter }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="table-card mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+      
+      <ng-container matColumnDef="rollNo">
+        <th mat-header-cell *matHeaderCellDef> {{ ui?.colRollNo }} </th>
+        <td mat-cell *matCellDef="let row"> {{row.rollNo}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="firstName">
+        <th mat-header-cell *matHeaderCellDef> {{ ui?.colFirstName }} </th>
+        <td mat-cell *matCellDef="let row"> {{row.firstName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="lastName">
+        <th mat-header-cell *matHeaderCellDef> {{ ui?.colLastName }} </th>
+        <td mat-cell *matCellDef="let row"> {{row.lastName}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="class">
+        <th mat-header-cell *matHeaderCellDef> {{ ui?.colClass }} </th>
+        <td mat-cell *matCellDef="let row"> {{row.class}} </td>
+      </ng-container>
+
+      <ng-container matColumnDef="attendanceStatus">
+        <th mat-header-cell *matHeaderCellDef> {{ ui?.colAttendance }} </th>
+        <td mat-cell *matCellDef="let row"> 
+          <span [class.present]="row.attendanceStatus === 'Present'"
+                [class.absent]="row.attendanceStatus === 'Absent'"
+                class="status-badge">
+            {{ row.attendanceStatus || ui?.statusNotMarked }}
+          </span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="5">{{ ui?.noRecords }}</td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" [attr.aria-label]="ui?.paginatorAria"></mat-paginator>
+  </div>
+</div>

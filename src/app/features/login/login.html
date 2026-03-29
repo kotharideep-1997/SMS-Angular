@@ -1,0 +1,46 @@
+<div class="login-container">
+  <mat-card class="login-card">
+    <mat-card-header>
+      <mat-card-title>{{ ui?.cardTitle }}</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="login-form">
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ ui?.usernameLabel }}</mat-label>
+          <input matInput formControlName="username" [placeholder]="ui?.usernamePlaceholder ?? ''">
+          @if (loginForm.get('username')?.hasError('required') && loginForm.get('username')?.touched) {
+            <mat-error>{{ ui?.usernameRequired }}</mat-error>
+          }
+          @if (loginForm.get('username')?.hasError('pattern') && loginForm.get('username')?.touched) {
+            <mat-error>{{ ui?.usernamePatternError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-100">
+          <mat-label>{{ ui?.passwordLabel }}</mat-label>
+          <input matInput type="password" formControlName="password" [placeholder]="ui?.passwordPlaceholder ?? ''">
+          @if (loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched) {
+            <mat-error>{{ ui?.passwordRequired }}</mat-error>
+          }
+          @if (loginForm.get('password')?.hasError('pattern') && loginForm.get('password')?.touched) {
+            <mat-error>{{ ui?.passwordPatternError }}</mat-error>
+          }
+        </mat-form-field>
+
+        <button
+          mat-raised-button
+          color="primary"
+          type="submit"
+          class="w-100 mt-3 login-submit"
+          [disabled]="loginForm.invalid || isLoading"
+        >
+          @if (isLoading) {
+            <mat-spinner diameter="22" class="login-spinner" />
+          } @else {
+            {{ ui?.buttonLogin }}
+          }
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>

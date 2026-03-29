@@ -1,0 +1,30 @@
+.spacer {
+  flex: 1 1 auto;
+}
+
+.app-title {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.active-link {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+.main-content {
+  height: calc(100vh - 64px); /* assuming 64px toolbar */
+  overflow-y: auto;
+  background-color: #f5f5f5;
+}
+
+/* For pages where toolbar is not present, like login */
+:host-context(mat-toolbar[hidden]) .main-content {
+  height: 100vh;
+}
