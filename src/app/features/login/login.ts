@@ -67,8 +67,8 @@ export class Login implements OnInit, OnDestroy {
     const passwordRe = new RegExp(appConfig.login.passwordPattern);
 
     this.loginForm = this.fb.group({
-      username: ['Admin', [Validators.required, Validators.pattern(usernameRe)]],
-      password: ['admin123', [Validators.required, Validators.pattern(passwordRe)]],
+      username: ['', [Validators.required, Validators.pattern(usernameRe)]],
+      password: ['', [Validators.required, Validators.pattern(passwordRe)]],
     });
 
     this.contextSub = this.generalContext.context$
